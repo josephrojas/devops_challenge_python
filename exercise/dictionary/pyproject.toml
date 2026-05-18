@@ -1,0 +1,44 @@
+[project]
+name = "dictionary"
+version = "0.1.0"
+description = "Project to deploy a dictionary class accesible from a server"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+  {name = "Joseph Rojas", email = "jorogo2001@hotmail.com"}
+]
+maintainers = [
+  {name = "Joseph Rojas", email = "jorogo2001@hotmail.com"}
+]
+
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.34.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "pytest-cov>=6.0.0", 
+    "ruff>=0.9.0",       
+    "mypy>=1.0.0",
+    "httpx==0.28.1"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "."
+explicit_package_bases = true
