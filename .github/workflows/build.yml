@@ -46,7 +46,8 @@ jobs:
         uses: astral-sh/setup-uv@v6
 
       - name: Install dependencies
-        run: uv pip install anthropic --system
+        working-directory: ia
+        run: uv sync
 
       - name: Get PR diff and commits
         id: pr_info
