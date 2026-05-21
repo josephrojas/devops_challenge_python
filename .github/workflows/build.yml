@@ -52,15 +52,17 @@ jobs:
       - name: Get PR diff and commits
         id: pr_info
         run: |
-          # diff last merge
-          echo "PR_DIFF<<EOF" >> $GITHUB_ENV
-          git diff HEAD~1 HEAD >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          {
+            echo "PR_DIFF<<DIFF_DELIMITER"
+            git diff HEAD~1 HEAD
+            echo "DIFF_DELIMITER"
+          } >> $GITHUB_ENV
 
-          # commits last merge
-          echo "PR_COMMITS<<EOF" >> $GITHUB_ENV
-          git log HEAD~1..HEAD --pretty=format:"%s" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          {
+            echo "PR_COMMITS<<COMMITS_DELIMITER"
+            git log HEAD~1..HEAD --pretty=format:"%s" --no-merges
+            echo "COMMITS_DELIMITER"
+          } >> $GITHUB_ENV
 
       - name: Update CHANGELOG
         env:
