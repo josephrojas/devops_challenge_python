@@ -83,7 +83,7 @@ jobs:
     name: Build and Push
     strategy:
       matrix:
-        exercise: [dictionary,spending_calculator]
+        exercise: [dictionary,spending_calculator,nth_letter]
     needs: sonarqube
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
