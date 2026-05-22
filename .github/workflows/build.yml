@@ -29,61 +29,61 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   
-  update_docs:
-    name: Update CHANGELOG
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+  # update_docs:
+  #   name: Update CHANGELOG
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: write
 
-    needs: sonarqube
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  #   needs: sonarqube
+  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
+  #     - name: Install uv
+  #       uses: astral-sh/setup-uv@v6
 
-      - name: Install dependencies
-        working-directory: ia
-        run: uv sync
+  #     - name: Install dependencies
+  #       working-directory: ia
+  #       run: uv sync
 
-      - name: Get PR diff and commits
-        id: pr_info
-        run: |
-          {
-            echo "PR_DIFF<<DIFF_DELIMITER"
-            git diff HEAD~1 HEAD
-            echo "DIFF_DELIMITER"
-          } >> $GITHUB_ENV
+  #     - name: Get PR diff and commits
+  #       id: pr_info
+  #       run: |
+  #         {
+  #           echo "PR_DIFF<<DIFF_DELIMITER"
+  #           git diff HEAD~1 HEAD
+  #           echo "DIFF_DELIMITER"
+  #         } >> $GITHUB_ENV
 
-          {
-            echo "PR_COMMITS<<COMMITS_DELIMITER"
-            git log HEAD~1..HEAD --pretty=format:"%s" --no-merges
-            echo "COMMITS_DELIMITER"
-          } >> $GITHUB_ENV
+  #         {
+  #           echo "PR_COMMITS<<COMMITS_DELIMITER"
+  #           git log HEAD~1..HEAD --pretty=format:"%s" --no-merges
+  #           echo "COMMITS_DELIMITER"
+  #         } >> $GITHUB_ENV
 
-      - name: Update CHANGELOG
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python ia/update_docs.py
+  #     - name: Update CHANGELOG
+  #       env:
+  #         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  #       run: python ia/update_docs.py
 
-      - name: Commit updated CHANGELOG
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add CHANGELOG.md
-          git diff --cached --quiet || git commit -m "docs: update CHANGELOG [skip ci]"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Commit updated CHANGELOG
+  #       run: |
+  #         git config user.name "github-actions[bot]"
+  #         git config user.email "github-actions[bot]@users.noreply.github.com"
+  #         git add CHANGELOG.md
+  #         git diff --cached --quiet || git commit -m "docs: update CHANGELOG [skip ci]"
+  #         git push
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
   deploy_registry:
     name: Build and Push
     strategy:
       matrix:
-        exercise: [dictionary]
+        exercise: [dictionary,spending_calculator]
     needs: sonarqube
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
